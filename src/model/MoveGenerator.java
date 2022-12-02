@@ -7,7 +7,7 @@ import java.util.List;
 public class MoveGenerator {
 
     private static List<Point> getEndPoints(Board board, int startIndex, int move){
-        System.out.println(board);
+
         List<Point> endPoints = new ArrayList<>();
         if (board == null || !Board.isValidIndex(startIndex)) {
             return endPoints;
@@ -15,22 +15,17 @@ public class MoveGenerator {
 
         int id = board.get(startIndex);
         Point p = Board.toPoint(startIndex);
-        addPoints(endPoints, p, id, move);
+        addPoints(endPoints, p, move);
 
         return endPoints;
     }
-    public static void addPoints(List<Point> points, Point point, int id, int move) {
+    public static void addPoints(List<Point> points, Point point, int move) {
 
-        boolean isKing = (id == Board.BLACK_KING_ID || id == Board.WHITE_KING_ID);
-        if (isKing || id == Board.BLACK_CHECKER_ID) {
-            points.add(new Point(point.x + move, point.y + move));
-            points.add(new Point(point.x - move, point.y + move));
-        }
+        points.add(new Point(point.x + move, point.y + move));
+        points.add(new Point(point.x - move, point.y + move));
+        points.add(new Point(point.x + move, point.y - move));
+        points.add(new Point(point.x - move, point.y - move));
 
-        if (isKing || id == Board.WHITE_CHECKER_ID) {
-            points.add(new Point(point.x + move, point.y - move));
-            points.add(new Point(point.x - move, point.y - move));
-        }
     }
     public static List<Point> getNormalMoves(Board board, int startIndex) {
 
@@ -63,11 +58,16 @@ public class MoveGenerator {
 
     public static boolean isValidSkipMove(Board board,
                                           int startIndex, int endIndex) {
+        if (board.get(endIndex) != Board.EMPTY) return false;
         int id = board.get(startIndex);
+
+        if (id == Board.INVALID || id == Board.EMPTY) return false;
+
         int middleID = board.get(Board.toIndex(Board.middle(startIndex, endIndex)));
-        if ((board.get(endIndex) != Board.EMPTY)||(id == Board.INVALID || id == Board.EMPTY) || (middleID == Board.EMPTY || middleID == Board.INVALID)) {
-            return false;
-        } else return (middleID == Board.BLACK_CHECKER_ID || middleID == Board.BLACK_KING_ID) == (id == Board.WHITE_CHECKER_ID || id == Board.WHITE_KING_ID);
+
+        if (middleID == Board.EMPTY || middleID == Board.INVALID) return false;
+
+        else return (middleID == Board.BLACK_CHECKER_ID || middleID == Board.BLACK_KING_ID) == (id == Board.WHITE_CHECKER_ID || id == Board.WHITE_KING_ID);
     }
 
 }

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -12,10 +13,11 @@ import java.util.List;
 public class Board {
     public static final int INVALID = -1;
     public static final int EMPTY = 0;
-    public static final int BLACK_CHECKER_ID = 1;
-    public static final int BLACK_KING_ID = 2;
-    public static final int WHITE_CHECKER_ID = 3;
-    public static final int WHITE_KING_ID = 4;
+    public static final int BLACK_CHECKER_ID = 4 * 1 + 2 * 1 + 1 * 0;;
+    public static final int BLACK_KING_ID = 4 * 1 + 2 * 1 + 1 * 1;
+    public static final int WHITE_CHECKER_ID = 4 * 1 + 2 * 0 + 1 * 0;
+    public static final int WHITE_KING_ID = 4 * 1 + 2 * 0 + 1 * 1;
+
     private int[] state;
 
 
@@ -71,6 +73,7 @@ public class Board {
         if (!isValidIndex(index)) {
             return INVALID;
         }
+
         return getBit(state[0], index) * 4 + getBit(state[1], index) * 2
                 + getBit(state[2], index);
     }
@@ -109,12 +112,10 @@ public class Board {
         else {
             target &= (~(1 << bit));
         }
-
         return target;
     }
 
     public static int getBit(int target, int bit) {
-
         if (bit < 0 || bit > 31) {
             return 0;
         }

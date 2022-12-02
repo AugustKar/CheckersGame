@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 
 import javax.swing.JButton;
 
@@ -16,23 +17,15 @@ import model.Game;
 import model.Player;
 
 public class CheckerBoard extends JButton {
-
-    private static final int PADDING = 0;
-
+    private static final int PADDING = 15;
     private Game game;
-
     private CheckersWindow window;
-
     private Player player1;
-
     private Player player2;
-
     private Point selected;
     private Color lightTile;
-
     private Color darkTile;
     private boolean isGameOver;
-
 
     public CheckerBoard(CheckersWindow window) {
         this(window, new Game(), null, null);
@@ -56,34 +49,18 @@ public class CheckerBoard extends JButton {
     }
 
     public void update() {
-        runPlayer();
         this.isGameOver = game.isGameOver();
         repaint();
     }
 
-    private void runPlayer() {
-        Player player = getCurrentPlayer();
-        if (player == null)
-            return;
-        getCurrentPlayer().updateGame(game);
-        update();
-    }
-
-    public synchronized boolean setGameState(boolean testValue,
+    public void setGameState(boolean testValue,
                                              String newState, String expected) {
-
         if (testValue && !game.getGameState().equals(expected)) {
-            return false;
+            return;
         }
 
         this.game.setGameState(newState);
         repaint();
-
-        return true;
-    }
-
-    public Game getGame() {
-        return game;
     }
 
     public void setPlayer1(Player player1) {
@@ -113,7 +90,7 @@ public class CheckerBoard extends JButton {
         Game game = this.game.copyCurrentBoard();
 
         // Perform calculations
-        final int BOX_PADDING = 4;
+        final int BOX_PADDING = 10;
         final int W = getWidth(), H = getHeight();
         final int DIM = Math.min(W, H), BOX_SIZE = (DIM - 2 * PADDING) / 8;
         final int OFFSET_X = (W - BOX_SIZE * 8) / 2;
@@ -158,7 +135,7 @@ public class CheckerBoard extends JButton {
                 else if (id == Board.BLACK_KING_ID) {
                     g.drawOval(cx, cy, CHECKER_SIZE, CHECKER_SIZE);
                     g.setColor(Color.BLACK);
-                    g.fillOval(cx - 1, cy - 2, CHECKER_SIZE, CHECKER_SIZE);
+                    g.fillOval(cx, cy, CHECKER_SIZE, CHECKER_SIZE);
                 }
 
                 // White checker
@@ -178,8 +155,7 @@ public class CheckerBoard extends JButton {
                 // Any king (add some extra highlights)
                 if (id == Board.BLACK_KING_ID || id == Board.WHITE_KING_ID) {
                     g.setColor(Color.GREEN);
-                    g.drawOval(cx - 1, cy - 2, CHECKER_SIZE, CHECKER_SIZE);
-                    g.drawOval(cx + 1, cy, CHECKER_SIZE - 4, CHECKER_SIZE - 4);
+                    g.drawOval(cx, cy , CHECKER_SIZE, CHECKER_SIZE);
                 }
             }
         }
@@ -211,7 +187,6 @@ public class CheckerBoard extends JButton {
 
 
     private void handleClick(int x, int y) {
-
         if (isGameOver) {
             return;
         }
@@ -225,13 +200,11 @@ public class CheckerBoard extends JButton {
         x = (x - OFFSET_X) / BOX_SIZE;
         y = (y - OFFSET_Y) / BOX_SIZE;
         Point sel = new Point(x, y);
-
         if (Board.isValidPoint(sel) && Board.isValidPoint(selected)) {
             boolean change = copy.isPlayer1Turn();
             String expected = copy.getGameState();
-            boolean move = copy.move(selected, sel);
-            boolean updated = (move?
-                    setGameState(true, copy.getGameState(), expected) : false);
+            copy.move(selected, sel);
+            setGameState(true, copy.getGameState(), expected);
 
             change = (copy.isPlayer1Turn() != change);
             this.selected = change? null : sel;

@@ -26,17 +26,17 @@ public class Game {
         this.isPlayer1Turn = true;
         this.skipIndex = -1;
     }
-    public boolean move(Point start, Point end) {
+    public void move(Point start, Point end) {
         if (start == null || end == null) {
-            return false;
+            return;
         }
-        return move(Board.toIndex(start), Board.toIndex(end));
+        move(Board.toIndex(start), Board.toIndex(end));
     }
 
-    public boolean move(int startIndex, int endIndex) {
+    public void move(int startIndex, int endIndex) {
 
         if (!MoveValidator.isValidMove(this, startIndex, endIndex)) {
-            return false;
+            return;
         }
 
         Point middle = Board.middle(startIndex, endIndex);
@@ -69,7 +69,6 @@ public class Game {
             this.skipIndex = -1;
         }
 
-        return true;
     }
 
     public Board getBoard() {
@@ -104,10 +103,6 @@ public class Game {
         return isPlayer1Turn;
     }
 
-    public void setPlayer1Turn(boolean isP1Turn) {
-        this.isPlayer1Turn = isP1Turn;
-    }
-
     public int getSkipIndex() {
         return skipIndex;
     }
@@ -115,16 +110,15 @@ public class Game {
     public String getGameState() {
 
         // Add the game board
-        String state = "";
+        StringBuilder state = new StringBuilder();
         for (int i = 0; i < 32; i ++) {
-            state += "" + board.get(i);
+            state.append("").append(board.get(i));
         }
 
         // Add the other info
-        state += (isPlayer1Turn ? "1" : "0");
-        state += skipIndex;
-
-        return state;
+        state.append(isPlayer1Turn ? "1" : "0");
+        state.append(skipIndex);
+        return state.toString();
     }
     public void setGameState(String state) {
 
