@@ -1,3 +1,5 @@
+//ertos
+
 package ui;
 
 import java.awt.BorderLayout;
@@ -34,3 +36,5 @@ public class CheckersWindow extends JFrame {
     }
 
 }
+
+//ertos
